@@ -1,11 +1,8 @@
 package com.example.freestyletournament.tournamentServ.Model.Tournois;
 
-import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwiss;
 import jakarta.persistence.*;
 
 import java.util.Objects;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 @Entity
 @Table(name="tournois")

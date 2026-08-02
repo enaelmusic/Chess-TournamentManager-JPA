@@ -29,8 +29,8 @@ public class PlayerTournoisDAO {
         TreeSet< PlayerSwiss> playerSet = new TreeSet<PlayerSwiss>();
         Set<Integer> playerTournois = playerTournoiModel.findAllByIdTournois(idTournois);
         for(int pt : playerTournois){
-            Optional<PlayerSwiss> player = psModel.findById(pt);
-            playerSet.add(player.get());
+            PlayerSwiss player = psModel.findById_joueurJ(pt);
+            playerSet.add(player);
         }
         return playerSet;
     }

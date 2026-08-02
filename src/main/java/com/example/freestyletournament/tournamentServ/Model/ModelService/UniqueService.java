@@ -25,4 +25,12 @@ public class UniqueService {
         }
         return  numUnique;
     }
+    public String getNumMM(boolean mancheORmatch, int num_manche, int idMatch){
+        if(!mancheORmatch){
+            return "M"+num_manche+"-"+idMatch;
+        }
+        else{
+            return "T"+num_manche+"-"+idMatch;
+        }
+    }
 }

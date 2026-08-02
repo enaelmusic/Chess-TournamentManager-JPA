@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface PlayerSwissModel extends CrudRepository<PlayerSwiss, Integer> {
     @NativeQuery("SELECT * FROM PLAYER WHERE num_joueur= ?1 LIMIT 1")
     PlayerSwiss findByNum_joueur(String num_joueur);
+    @NativeQuery("SELECT * FROM PLAYER WHERE id= ?1 LIMIT 1")
+    PlayerSwiss findById_joueurJ(int id);
 }
