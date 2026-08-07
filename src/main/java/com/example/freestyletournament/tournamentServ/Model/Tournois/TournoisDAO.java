@@ -48,12 +48,21 @@ public class TournoisDAO {
             return tournoisM.save(tournois); //UPDATE
         }
     }
-
     public String getTournoisName(String num_tournois) {
         return tournoisM.findIdTournoisByNumTournois(num_tournois).getName();
     }
 
     public TreeSet<MatchSwiss> startTournois(Tournois tournois) {
+        Tournois t = getTournoisInfo(tournois);
+        TreeSet<MancheSwiss> mancheSet = mancheSwissDAO.creerManche(t.getNum_tournois(), t.getNbr_manche(), t.getId());
+        log.info("lenght SEt = " + mancheSet.size());
+        MancheSwiss m = mancheSet.getFirst();
+        log.info("MANCHE =" + m.getNum_manche());
+        classementTournoisDAO.initialiserClassement(t.getId(), playerTournoisDAO.getPlayerByIdTournois(t.getId()));
+        return matchSwissDAO.appariementAleatoir(m.getNum_manche(), playerTournoisDAO.getPlayerByIdTournois(t.getId()));
+    }
+
+    private Tournois getTournoisInfo(Tournois tournois) {
         log.info("tournois num :" + tournois.getNum_tournois() + " " + tournois.getDuree_min());
         Tournois t = tournoisM.findIdTournoisByNumTournois(tournois.getNum_tournois());
         log.info("tournois :" + t.toString());
@@ -63,19 +72,12 @@ public class TournoisDAO {
         t.setDuree_min(tournois.getDuree_min());
         t.setNbr_manche(tournois.getNbr_manche());
         t = tournoisM.save(t);
-
-        TreeSet<MancheSwiss> mancheSet = mancheSwissDAO.creerManche(t.getNum_tournois(), t.getNbr_manche(), t.getId());
-        log.info("lenght SEt = " + mancheSet.size());
-        MancheSwiss m = mancheSet.getFirst();
-        log.info("MANCHE =" + m.getNum_manche());
-        classementTournoisDAO.initialiserClassement(t.getId(), playerTournoisDAO.getPlayerByIdTournois(t.getId()));
-        return matchSwissDAO.appariementAleatoir(m.getNum_manche(), playerTournoisDAO.getPlayerByIdTournois(t.getId()));
+        return t;
     }
 
-    public TreeSet<Tournois> getTournois() {
+    public TreeSet<Tournois> getAllTournois() {
         TreeSet<Tournois> setTournois = new TreeSet<Tournois>();
-        for (Tournois t : tournoisM.findAll()
-        ) {
+        for (Tournois t : tournoisM.findAll()) {
             setTournois.add(t);
         }
         return setTournois;
@@ -96,5 +98,11 @@ public class TournoisDAO {
         MancheSwiss m = new MancheSwiss();
         m = mancheSwissDAO.getNextManche(mancheSwissDAO.getMancheByNum(num_manchePrecedente));
         return matchSwissDAO.appariementLogic(m.getNum_manche(), idTournois);
+    }
+
+    public TournoisDTO getTournoisDto(String num_manche){
+        log.info("NumManche pour DTO : "+num_manche);
+        Tournois t = tournoisM.findTournoisByNumManche(num_manche);
+        return new TournoisDTO(t.getNbr_manche(),t.getName(),t.getNum_tournois(),t.getStatusTournois());
     }
 }

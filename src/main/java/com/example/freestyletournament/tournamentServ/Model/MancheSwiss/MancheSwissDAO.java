@@ -31,6 +31,7 @@ public class MancheSwissDAO {
             MancheSwiss m = new MancheSwiss();
             m.setNum_tournois(num_tournois);
             m.setNum_manche("T-"+idTournois+"-Manche-"+(i+1)+"-"+ LocalDateTime.now());
+            m.setInt_manche(i+1);
             mancheRep.save(m);
             set.add(m);
         }

@@ -65,6 +65,7 @@ public class MatchSwissDAO {
                 resultSet.add(match);
             }
         }
+        log.debug("fin d'pairing aleatoir");
         return resultSet;
     }
 

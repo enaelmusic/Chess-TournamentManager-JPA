@@ -13,7 +13,10 @@ import com.example.freestyletournament.tournamentServ.Model.Tournois.DernierManc
 import com.example.freestyletournament.tournamentServ.Model.Tournois.Tournois;
 import com.example.freestyletournament.tournamentServ.Model.Tournois.TournoisDAO;
 import com.example.freestyletournament.tournamentServ.Model.PlayerTournois.PlayerTournoisDAO;
+import com.example.freestyletournament.tournamentServ.Model.Tournois.TournoisDTO;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +27,7 @@ import java.util.TreeSet;
 
 @RestController
 public class TournoisController {
+    private static final Logger log = LoggerFactory.getLogger(TournoisController.class);
     @Autowired
     private TournoisDAO tournoisDAO;
     @Autowired
@@ -91,11 +95,18 @@ public class TournoisController {
     @PostMapping("/nextround")
     public ResponseEntity<TreeSet<MatchSwiss>> nextManche(@RequestBody TreeSet<MatchSwiss> matches){
         try {
-            return ResponseEntity.accepted().body(tournoisDAO.nextManche(matches));
+            TreeSet<MatchSwiss> matcheSwisses = tournoisDAO.nextManche(matches);
+            MancheSwiss m = mancheSwissDAO.getMancheByNum(matcheSwisses.getFirst().getNum_manche());
+            log.info("NumManche pour DTO"+matcheSwisses.getFirst().getNum_manche());
+            TournoisDTO t = tournoisDAO.getTournoisDto(matcheSwisses.getFirst().getNum_manche());
+            return ResponseEntity.accepted().
+                    header("numManche",m.getInt_manche()+"").
+                    header("mancheMax",t.getNbr_manches()+"").
+                    body(matcheSwisses);
         } catch (DernierMancheException e) {
             @Nullable TreeSet<MatchSwiss> errorMatch=null;
             return ResponseEntity
-                    .status(HttpStatus.OK)
+                    .status(HttpStatus.NO_CONTENT)
                     .body(errorMatch);
         }
     }

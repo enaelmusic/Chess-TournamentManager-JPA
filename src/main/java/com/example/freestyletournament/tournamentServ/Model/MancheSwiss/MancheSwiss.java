@@ -11,6 +11,7 @@ public class MancheSwiss implements Comparable<MancheSwiss> {
     private int id;
 
     private String num_tournois;
+    private int int_manche;
     private String num_manche;
     @Column(name = "status", columnDefinition = "TINYINT")
     private int status;
@@ -40,6 +41,14 @@ public class MancheSwiss implements Comparable<MancheSwiss> {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public int getInt_manche() {
+        return int_manche;
+    }
+
+    public void setInt_manche(int int_manche) {
+        this.int_manche = int_manche;
     }
 
     @Override
