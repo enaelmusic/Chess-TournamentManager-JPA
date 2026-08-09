@@ -1,7 +1,9 @@
 package com.example.freestyletournament.tournamentServ.Model.ClassementTournois;
 
 import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwiss;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.NativeQuery;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +11,7 @@ import java.util.ArrayList;
 import java.util.TreeSet;
 
 @Repository
-public interface ClassementTournoisRep extends CrudRepository<ClassementTournois, Integer> {
+public interface ClassementTournoisRep extends JpaRepository<ClassementTournois, Integer> {
     @NativeQuery("SELECT * FROM CLASSEMENT_TOURNOIS WHERE idTournois= ?1 AND idPlayer = ?2 LIMIT 1 ")
     ClassementTournois findClassementByIdTournoisAndIdPlayer(int idTournois, int idPlayer);
 
@@ -22,6 +24,6 @@ public interface ClassementTournoisRep extends CrudRepository<ClassementTournois
     //utilisable
     @NativeQuery("SELECT PT.* FROM PLAYER PT JOIN CLASSEMENT_TOURNOIS CT ON PT.id=CT.idPlayer WHERE idTournois=?1 ORDER BY CT.point DESC , CT.round_gagner , CT.round_perdu , CT.round_null DESC")
     ArrayList<PlayerSwiss> getPlayersClassee(int idTournois);
-    @NativeQuery("SELECT * FROM CLASSEMENT_TOURNOIS  WHERE idTournois=?1 ORDER BY point DESC , round_gagner , round_perdu , round_null DESC")
-    ArrayList<ClassementTournois> getClassementTournois(int idTournois);
+    @Query("SELECT new com.example.freestyletournament.tournamentServ.Model.ClassementTournois.ClassementDTO(CT.idPlayer, P.nom, CT.point) FROM ClassementTournois CT JOIN PlayerSwiss P ON P.id=CT.idPlayer WHERE CT.idTournois=:idTournois ORDER BY CT.point DESC , CT.round_gagner , CT.round_perdu , CT.round_null DESC")
+    ArrayList<ClassementDTO> getClassementTournois(int idTournois);
 }

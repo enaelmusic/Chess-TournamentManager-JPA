@@ -1,5 +1,6 @@
 package com.example.freestyletournament.tournamentServ.Controller;
 
+import com.example.freestyletournament.tournamentServ.Model.ClassementTournois.ClassementDTO;
 import com.example.freestyletournament.tournamentServ.Model.ClassementTournois.ClassementTournois;
 import com.example.freestyletournament.tournamentServ.Model.ClassementTournois.ClassementTournoisDAO;
 import com.example.freestyletournament.tournamentServ.Model.MancheSwiss.MancheSwiss;
@@ -83,8 +84,13 @@ public class TournoisController {
      *     le tournois demare en renvoyant une liste de match correspondant au PREMIER ROUND(MancheSwiss)
      */
     @PostMapping("/starttournois")
-    public TreeSet<MatchSwiss> startTournois(@RequestBody Tournois tournois){
-        return tournoisDAO.startTournois(tournois);
+    public ResponseEntity<TreeSet<MatchSwiss>> startTournois(@RequestBody Tournois tournois){
+        TreeSet<MatchSwiss> matchSwissTreeSet = tournoisDAO.startTournois(tournois);
+        TournoisDTO t = new TournoisDTO(tournois.getNbr_manche(),tournois.getName(),tournois.getNum_tournois(),tournois.getStatusTournois());
+        return ResponseEntity.accepted().
+                header("numManche","1").
+                header("mancheMax",t.getNbr_manches()+"").
+                body(matchSwissTreeSet);
     }
 
     /**
@@ -111,15 +117,16 @@ public class TournoisController {
         }
     }
     @GetMapping("/getClassementTournois/{id}")
-    public ArrayList<ClassementTournois> getClassementTournois(@PathVariable int id){
+    public ArrayList<ClassementDTO> getClassementTournois(@PathVariable int id){
         return classementTournoisDAO.getClassmenetTournois(id);
     }
     /**
      * getterSimple
      */
-    @GetMapping("/getNamePlayer/{num_joueur}")
-    public String getNamePlayer(String num_joueur){
-        return playerSwissDAO.getPlayer(num_joueur).getNom();
+    @GetMapping("/getNamePlayer/{id}")
+    public String getNamePlayer(@PathVariable int id){
+        log.info("l'id recu dans le controller : {}", id);
+        return playerSwissDAO.getPlayer(id).getNom();
     }
 
     @GetMapping("/getNameTournois/{num_tournois}")

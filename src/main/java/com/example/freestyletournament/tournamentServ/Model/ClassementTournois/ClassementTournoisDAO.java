@@ -69,7 +69,7 @@ public class ClassementTournoisDAO {
     public ArrayList<PlayerSwiss> getPlayerclasser(int idTournois){
         return classement.getPlayersClassee(idTournois);
     }
-    public ArrayList<ClassementTournois> getClassmenetTournois(int idTournois){
-        return getClassmenetTournois(idTournois);
+    public ArrayList<ClassementDTO> getClassmenetTournois(int idTournois){
+        return classement.getClassementTournois(idTournois);
     }
 }
