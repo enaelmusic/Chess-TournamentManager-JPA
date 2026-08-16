@@ -78,4 +78,8 @@ public class MancheSwissDAO {
     public ArrayList<MancheSwiss> getManchesByTournoisNum(String num_tournois){
         return  mancheRep.findAllMancheByTournois(num_tournois);
     }
+    public ArrayList<MancheSwiss> getManchesByTournoisId(int idTournois){
+        String numTournois = tournoisModel.findIdTournoisByiDtournois(idTournois).getNum_tournois();
+        return  mancheRep.findAllMancheByTournois(numTournois);
+    }
 }

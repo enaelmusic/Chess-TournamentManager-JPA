@@ -14,5 +14,5 @@ public interface MancheSwissRep extends CrudRepository<MancheSwiss,Integer> {
     @NativeQuery("SELECT * FROM TEST_MANCHESWISS WHERE num_tournois=?1")
     ArrayList<MancheSwiss> findAllMancheByTournois(String num_tournois);
     @NativeQuery("SELECT * FROM TEST_MANCHESWISS WHERE id=?1 LIMIT 1")
-    MancheSwiss findMancheById(int id);
+    ArrayList<MancheSwiss> findMancheById(int id);
 }

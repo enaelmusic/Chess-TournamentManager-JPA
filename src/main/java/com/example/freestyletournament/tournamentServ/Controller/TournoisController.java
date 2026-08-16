@@ -134,4 +134,9 @@ public class TournoisController {
         return tournoisDAO.getTournoisName(num_tournois);
     }
 
+    @GetMapping("/getManchesTournois/{idTournois}")
+    public ArrayList<MancheSwiss> getMancheTournois(@PathVariable int idTournois){
+        return mancheSwissDAO.getManchesByTournoisId(idTournois);
+    }
+
 }

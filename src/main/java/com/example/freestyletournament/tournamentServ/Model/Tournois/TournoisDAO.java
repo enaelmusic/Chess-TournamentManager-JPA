@@ -57,6 +57,7 @@ public class TournoisDAO {
         TreeSet<MancheSwiss> mancheSet = mancheSwissDAO.creerManche(t.getNum_tournois(), t.getNbr_manche(), t.getId());
         log.info("lenght SEt = " + mancheSet.size());
         MancheSwiss m = mancheSet.getFirst();
+        mancheSwissDAO.sauverStatusManche(m,MancheEnum.ENCOURS.getTyni());
         log.info("MANCHE =" + m.getNum_manche());
         classementTournoisDAO.initialiserClassement(t.getId(), playerTournoisDAO.getPlayerByIdTournois(t.getId()));
         return matchSwissDAO.appariementAleatoir(m.getNum_manche(), playerTournoisDAO.getPlayerByIdTournois(t.getId()));
