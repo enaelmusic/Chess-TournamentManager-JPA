@@ -104,6 +104,6 @@ public class TournoisDAO {
     public TournoisDTO getTournoisDto(String num_manche){
         log.info("NumManche pour DTO : "+num_manche);
         Tournois t = tournoisM.findTournoisByNumManche(num_manche);
-        return new TournoisDTO(t.getNbr_manche(),t.getName(),t.getNum_tournois(),t.getStatusTournois());
+        return new TournoisDTO(t.getId(),t.getNbr_manche(),t.getName(),t.getNum_tournois(),t.getStatusTournois());
     }
 }

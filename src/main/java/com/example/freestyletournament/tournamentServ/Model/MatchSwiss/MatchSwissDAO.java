@@ -108,5 +108,10 @@ public class MatchSwissDAO {
         }
         return resultSet;
     }
+
+    public TreeSet<MatchSwiss> getMatchByManche(String num_manche){
+        TreeSet<MatchSwiss> m = matchSwissRepestory.findMatchBynumManche(num_manche);
+        return m;
+    }
 }
 

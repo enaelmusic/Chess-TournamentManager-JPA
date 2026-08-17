@@ -2,9 +2,10 @@ package com.example.freestyletournament.tournamentServ.Model.Tournois;
 
 public class TournoisDTO {
     private String num_tournois, name;
-    private int nbr_manches, status;
+    private int nbr_manches, status, id;
 
-    public TournoisDTO(int nbr_manches, String name, String num_tournois,int status) {
+    public TournoisDTO(int id, int nbr_manches, String name, String num_tournois,int status) {
+        this.id=id;
         this.nbr_manches = nbr_manches;
         this.name = name;
         this.num_tournois = num_tournois;
@@ -41,5 +42,9 @@ public class TournoisDTO {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getId() {
+        return this.id+"";
     }
 }

@@ -86,7 +86,7 @@ public class TournoisController {
     @PostMapping("/starttournois")
     public ResponseEntity<TreeSet<MatchSwiss>> startTournois(@RequestBody Tournois tournois){
         TreeSet<MatchSwiss> matchSwissTreeSet = tournoisDAO.startTournois(tournois);
-        TournoisDTO t = new TournoisDTO(tournois.getNbr_manche(),tournois.getName(),tournois.getNum_tournois(),tournois.getStatusTournois());
+        TournoisDTO t = new TournoisDTO(tournois.getId(),tournois.getNbr_manche(),tournois.getName(),tournois.getNum_tournois(),tournois.getStatusTournois());
         return ResponseEntity.accepted().
                 header("numManche","1").
                 header("mancheMax",t.getNbr_manches()+"").
@@ -137,6 +137,17 @@ public class TournoisController {
     @GetMapping("/getManchesTournois/{idTournois}")
     public ArrayList<MancheSwiss> getMancheTournois(@PathVariable int idTournois){
         return mancheSwissDAO.getManchesByTournoisId(idTournois);
+    }
+
+    @GetMapping("/getMatchByManche/{num_manche}")
+    public ResponseEntity<TreeSet<MatchSwiss>> getMatchByManche(@PathVariable String num_manche){
+        MancheSwiss m = mancheSwissDAO.getMancheByNum(num_manche);
+        TournoisDTO t = tournoisDAO.getTournoisDto(num_manche);
+        return ResponseEntity.accepted().
+                header("numManche",m.getInt_manche()+"").
+                header("mancheMax",t.getNbr_manches()+"").
+                header("IDTOURNOIS",t.getId()).
+                body(matchSwissDAO.getMatchByManche(num_manche));
     }
 
 }
