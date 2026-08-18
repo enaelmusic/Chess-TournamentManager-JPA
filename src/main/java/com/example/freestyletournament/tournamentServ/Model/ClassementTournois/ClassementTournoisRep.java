@@ -25,5 +25,5 @@ public interface ClassementTournoisRep extends JpaRepository<ClassementTournois,
     @NativeQuery("SELECT PT.* FROM PLAYER PT JOIN CLASSEMENT_TOURNOIS CT ON PT.id=CT.idPlayer WHERE idTournois=?1 ORDER BY CT.point DESC , CT.round_gagner , CT.round_perdu , CT.round_null DESC")
     ArrayList<PlayerSwiss> getPlayersClassee(int idTournois);
     @Query("SELECT new com.example.freestyletournament.tournamentServ.Model.ClassementTournois.ClassementDTO(CT.idPlayer, P.nom, CT.point) FROM ClassementTournois CT JOIN PlayerSwiss P ON P.id=CT.idPlayer WHERE CT.idTournois=:idTournois ORDER BY CT.point DESC , CT.round_gagner , CT.round_perdu , CT.round_null DESC")
-    ArrayList<ClassementDTO> getClassementTournois(int idTournois);
+    ArrayList<ClassementDTO> getClassementTournois(String idTournois);
 }

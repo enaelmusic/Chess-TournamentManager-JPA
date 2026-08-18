@@ -88,6 +88,7 @@ public class TournoisController {
         TreeSet<MatchSwiss> matchSwissTreeSet = tournoisDAO.startTournois(tournois);
         TournoisDTO t = new TournoisDTO(tournois.getId(),tournois.getNbr_manche(),tournois.getName(),tournois.getNum_tournois(),tournois.getStatusTournois());
         return ResponseEntity.accepted().
+                header("IDTOURNOIS",t.getId()).
                 header("numManche","1").
                 header("mancheMax",t.getNbr_manches()+"").
                 body(matchSwissTreeSet);
@@ -106,6 +107,7 @@ public class TournoisController {
             log.info("NumManche pour DTO"+matcheSwisses.getFirst().getNum_manche());
             TournoisDTO t = tournoisDAO.getTournoisDto(matcheSwisses.getFirst().getNum_manche());
             return ResponseEntity.accepted().
+                    header("IDTOURNOIS",t.getId()).
                     header("numManche",m.getInt_manche()+"").
                     header("mancheMax",t.getNbr_manches()+"").
                     body(matcheSwisses);
@@ -117,7 +119,7 @@ public class TournoisController {
         }
     }
     @GetMapping("/getClassementTournois/{id}")
-    public ArrayList<ClassementDTO> getClassementTournois(@PathVariable int id){
+    public ArrayList<ClassementDTO> getClassementTournois(@PathVariable String id){
         return classementTournoisDAO.getClassmenetTournois(id);
     }
     /**
@@ -135,7 +137,7 @@ public class TournoisController {
     }
 
     @GetMapping("/getManchesTournois/{idTournois}")
-    public ArrayList<MancheSwiss> getMancheTournois(@PathVariable int idTournois){
+    public ArrayList<MancheSwiss> getMancheTournois(@PathVariable String idTournois){
         return mancheSwissDAO.getManchesByTournoisId(idTournois);
     }
 
