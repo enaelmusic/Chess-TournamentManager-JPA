@@ -7,6 +7,7 @@ import com.example.freestyletournament.tournamentServ.Model.MancheSwiss.MancheSw
 import com.example.freestyletournament.tournamentServ.Model.MancheSwiss.MancheSwissDAO;
 import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwiss;
 import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwissDAO;
+import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwissDTO;
 import com.example.freestyletournament.tournamentServ.Model.PlayerTournois.PlayerTournois;
 import com.example.freestyletournament.tournamentServ.Model.MatchSwiss.MatchSwiss;
 import com.example.freestyletournament.tournamentServ.Model.MatchSwiss.MatchSwissDAO;
@@ -74,9 +75,9 @@ public class TournoisController {
     /**
      *     mettre a joueur la liste des participant du tournois.
      */
-    @GetMapping("/playerTournoisList/{id}")
-    public TreeSet<PlayerSwiss> getPlayerTournois(@PathVariable int id){
-        return playerTournoisDAO.getPlayerByIdTournois(id);
+    @GetMapping("/playerTournoisList/{idTournois}")
+    public TreeSet<PlayerSwissDTO> getPlayerTournois(@PathVariable int idTournois){
+        return playerTournoisDAO.getPlayerByIdTournois(idTournois);
     }
 
     /**
@@ -150,6 +151,10 @@ public class TournoisController {
                 header("mancheMax",t.getNbr_manches()+"").
                 header("IDTOURNOIS",t.getId()).
                 body(matchSwissDAO.getMatchByManche(num_manche));
+    }
+    @PostMapping("/supprimerParticipant{idPlayer}")
+    public void supprimerPlayerTournois(@PathVariable int idPlayer){
+        playerTournoisDAO.supprimerParticipant(idPlayer);
     }
 
 }

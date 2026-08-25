@@ -2,6 +2,7 @@ package com.example.freestyletournament.tournamentServ.Model.ClassementTournois;
 
 import com.example.freestyletournament.tournamentServ.Model.MatchSwiss.MatchSwiss;
 import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwiss;
+import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwissDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +48,9 @@ public class ClassementTournoisDAO {
         classement.save(classementPlayerW);
         classement.save(classementPlayerB);
     }
-    public void initialiserClassement(int idTournois, TreeSet<PlayerSwiss> players){
+    public void initialiserClassement(int idTournois, TreeSet<PlayerSwissDTO> players){
         log.info("CLASSMENT INIT START : size players= "+players.size());
-        for(PlayerSwiss p: players){
+        for(PlayerSwissDTO p: players){
             ClassementTournois ct = new ClassementTournois();
             ct.setIdTournois(idTournois);
             ct.setIdPlayer(p.getId());

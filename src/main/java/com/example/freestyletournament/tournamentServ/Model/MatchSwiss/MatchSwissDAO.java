@@ -6,6 +6,7 @@ import com.example.freestyletournament.tournamentServ.Model.MancheSwiss.MancheSw
 import com.example.freestyletournament.tournamentServ.Model.MancheSwiss.MancheSwissRep;
 import com.example.freestyletournament.tournamentServ.Model.ModelService.UniqueService;
 import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwiss;
+import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwissDTO;
 import com.example.freestyletournament.tournamentServ.Model.Tournois.TournoisDAO;
 import com.example.freestyletournament.tournamentServ.Model.Tournois.TournoisModel;
 import org.slf4j.Logger;
@@ -33,13 +34,13 @@ public class MatchSwissDAO {
     private static final Logger log = LoggerFactory.getLogger(TournoisDAO.class);
     private final Random rand = new Random();
 
-    public TreeSet<MatchSwiss> appariementAleatoir(String num_manche, TreeSet<PlayerSwiss> playerSwisses) {
+    public TreeSet<MatchSwiss> appariementAleatoir(String num_manche, TreeSet<PlayerSwissDTO> playerSwisses) {
         log.info("je rentre en fonction appariemnt aleatoir: " + num_manche);
         // MancheSwiss manche = mancheSwissRep.findIdMancheByManche(num_manche);
 //        log.info("manche trouver id= " + manche.getId());
         TreeSet<MatchSwiss> resultSet = new TreeSet<MatchSwiss>();
-        ArrayList<PlayerSwiss> players = new ArrayList<>();
-        for (PlayerSwiss ps : playerSwisses) {
+        ArrayList<PlayerSwissDTO> players = new ArrayList<>();
+        for (PlayerSwissDTO ps : playerSwisses) {
             players.add(ps);
         }
         int numTable = 1;
@@ -52,10 +53,10 @@ public class MatchSwissDAO {
             } else {
                 int randint = rand.nextInt(players.size());
                 log.info("randint = " + randint + "player size =" + players.size());
-                PlayerSwiss pW = players.get(randint);
+                PlayerSwissDTO pW = players.get(randint);
                 players.remove(randint);
                 randint = rand.nextInt(players.size());
-                PlayerSwiss pB = players.get(randint);
+                PlayerSwissDTO pB = players.get(randint);
                 players.remove(randint);
 
                 match.buildMatch(num_manche, pW.getId(), pW.getNom(), pB.getId(), pB.getNom(), num_match, numTable);
@@ -69,9 +70,9 @@ public class MatchSwissDAO {
         return resultSet;
     }
 
-    public MatchSwiss buildPlayerBye(String num_manche, ArrayList<PlayerSwiss> players, String num_match, int numTable) {
+    public MatchSwiss buildPlayerBye(String num_manche, ArrayList<PlayerSwissDTO> players, String num_match, int numTable) {
         MatchSwiss match = new MatchSwiss();
-        PlayerSwiss pW = players.getFirst();
+        PlayerSwissDTO pW = players.getFirst();
         match.buildMatch(num_manche, pW.getId(), pW.getNom(), pW.getId(), "BYE", num_match, numTable);
         match.setStatus(4);
         match.setTableNum(0);
@@ -88,18 +89,22 @@ public class MatchSwissDAO {
 
         TreeSet<MatchSwiss> resultSet = new TreeSet<>();
         ArrayList<PlayerSwiss> players = classementTournoisDAO.getPlayerclasser(idTournois) ;
+        ArrayList<PlayerSwissDTO> playerSwissDTOS= new ArrayList<>();
+        for(PlayerSwiss p : players){
+            playerSwissDTOS.add(new PlayerSwissDTO(p.getId(),p.getNom()));
+        }
         int numTable = 1;
-        while (players.size() > 0) {
+        while (playerSwissDTOS.size() > 0) {
             MatchSwiss match = new MatchSwiss();
             String num_match = num_manche + "->" + numTable;
-            if (players.size() == 1) {
-                resultSet.add(buildPlayerBye(num_manche, players, num_match, numTable));
+            if (playerSwissDTOS.size() == 1) {
+                resultSet.add(buildPlayerBye(num_manche, playerSwissDTOS, num_match, numTable));
                 players.removeFirst();
             } else {
-                PlayerSwiss pW = players.getFirst();
-                players.remove(pW);
-                PlayerSwiss pB = players.getFirst();
-                players.remove(pB);
+                PlayerSwissDTO pW = playerSwissDTOS.getFirst();
+                playerSwissDTOS.remove(pW);
+                PlayerSwissDTO pB = playerSwissDTOS.getFirst();
+                playerSwissDTOS.remove(pB);
                 match.buildMatch(num_manche, pW.getId(), pW.getNom(), pB.getId(), pB.getNom(), num_match, numTable);
                 numTable++;
                 match = matchSwissRepestory.save(match);

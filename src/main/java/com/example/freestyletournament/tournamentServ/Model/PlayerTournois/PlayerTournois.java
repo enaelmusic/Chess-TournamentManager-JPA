@@ -12,10 +12,12 @@ public class PlayerTournois {
     private int id;
     private int idPlayer;
     private int idTournois;
+    @Column(name = "status", columnDefinition = "TINYINT")
+    private int status;
 
 
     public int getId() {
-        return id;
+        return this.id;
     }
 
     public int getIdPlayer() {
@@ -32,6 +34,14 @@ public class PlayerTournois {
 
     public void setIdTournois(int idTournois) {
         this.idTournois = idTournois;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     @Override

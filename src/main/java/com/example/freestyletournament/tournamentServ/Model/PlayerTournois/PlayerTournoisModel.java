@@ -10,6 +10,8 @@ import java.util.TreeSet;
 
 @Repository
 public interface PlayerTournoisModel extends CrudRepository<PlayerTournois, Integer> {
-    @NativeQuery("SELECT idPlayer FROM PLAYER_TOURNOIS where idTournois=?1")
-    Set<Integer> findAllByIdTournois(int idTournois);
+    @NativeQuery("SELECT * FROM PLAYER_TOURNOIS where idTournois=?1")
+    Set<PlayerTournois> findAllByIdTournois(int idTournois);
+    @NativeQuery("SELECT * FROM PLAYER_TOURNOIS where idPlayer=?1")
+    PlayerTournois findPlayerById(int idPlayer);
 }

@@ -107,4 +107,8 @@ public class TournoisDAO {
         Tournois t = tournoisM.findTournoisByNumManche(num_manche);
         return new TournoisDTO(t.getId(),t.getNbr_manche(),t.getName(),t.getNum_tournois(),t.getStatusTournois());
     }
+
+    public void supprimerParticipant(int idPlayer){
+        playerTournoisDAO.supprimerParticipant(idPlayer);
+    }
 }

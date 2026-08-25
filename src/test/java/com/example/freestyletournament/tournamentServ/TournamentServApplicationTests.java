@@ -2,6 +2,7 @@ package com.example.freestyletournament.tournamentServ;
 
 import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwiss;
 import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwissDAO;
+import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwissDTO;
 import com.example.freestyletournament.tournamentServ.Model.PlayerTournois.PlayerTournoisDAO;
 import com.example.freestyletournament.tournamentServ.Model.PlayerTournois.PlayerTournoisModel;
 import com.example.freestyletournament.tournamentServ.Model.Tournois.Tournois;
@@ -68,8 +69,8 @@ class TournamentServApplicationTests {
 	@Test
 	void returSetPlayer(){
 
-		TreeSet<PlayerSwiss> setPlayer = ptDAO.getPlayerByIdTournois(26);
-		for(PlayerSwiss p: setPlayer){
+		TreeSet<PlayerSwissDTO> setPlayer = ptDAO.getPlayerByIdTournois(26);
+		for(PlayerSwissDTO p: setPlayer){
 			System.out.print(p.toString());
 		}
 	}
