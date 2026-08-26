@@ -86,7 +86,10 @@ public class MatchSwissDAO {
 
     public TreeSet<MatchSwiss> appariementLogic(String num_manche, int idTournois) {
         //je cherche le meilleur joueur : RoundGagner max, roundPerdu MIN , roundNull min
-
+        //BUG FIN AOUT
+        /**
+         * il y avait un bug lors du build BYE, j'ai remplacer tout correctement suaf la lighe 104, ici c'est fait a tester .
+         */
         TreeSet<MatchSwiss> resultSet = new TreeSet<>();
         ArrayList<PlayerSwiss> players = classementTournoisDAO.getPlayerclasser(idTournois) ;
         ArrayList<PlayerSwissDTO> playerSwissDTOS= new ArrayList<>();
@@ -99,7 +102,7 @@ public class MatchSwissDAO {
             String num_match = num_manche + "->" + numTable;
             if (playerSwissDTOS.size() == 1) {
                 resultSet.add(buildPlayerBye(num_manche, playerSwissDTOS, num_match, numTable));
-                players.removeFirst();
+                playerSwissDTOS.removeFirst();
             } else {
                 PlayerSwissDTO pW = playerSwissDTOS.getFirst();
                 playerSwissDTOS.remove(pW);
