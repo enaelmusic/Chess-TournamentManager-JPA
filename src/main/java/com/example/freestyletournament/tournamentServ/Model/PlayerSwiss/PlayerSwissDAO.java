@@ -1,6 +1,7 @@
 package com.example.freestyletournament.tournamentServ.Model.PlayerSwiss;
 
 import com.example.freestyletournament.tournamentServ.Model.ModelService.UniqueService;
+import com.example.freestyletournament.tournamentServ.Model.PlayerTournois.PlayerTournoisModel;
 import com.example.freestyletournament.tournamentServ.Model.Tournois.Tournois;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,5 +38,12 @@ public class PlayerSwissDAO {
         PlayerSwiss player =playerSwissModel.findById_joueurJ(id);
         log.info("je renvoie le player id = {}",player.getNom());
         return player;
+    }
+
+    public void modifierPlayerTournois( PlayerSwissDTO player) {
+        log.info("je recois le nvx nom: "+player.getNom());
+        PlayerSwiss playerModifier = playerSwissModel.findById_joueurJ(player.getId());
+        playerModifier.setNom(player.getNom());
+        playerSwissModel.save(playerModifier);
     }
 }

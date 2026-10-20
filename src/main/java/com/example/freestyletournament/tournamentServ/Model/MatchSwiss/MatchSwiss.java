@@ -1,5 +1,6 @@
 package com.example.freestyletournament.tournamentServ.Model.MatchSwiss;
 
+import com.example.freestyletournament.tournamentServ.Model.ModelService.MatchStatus;
 import jakarta.persistence.*;
 
 @Entity
@@ -93,5 +94,6 @@ public class MatchSwiss implements Comparable<MatchSwiss> {
         this.nom_black=nom_black;
         this.tableNum=numTable;
         setNum_match(num_match);
+        this.status= MatchStatus.ENATTENT.getTyni();
     }
 }

@@ -1,7 +1,6 @@
 package com.example.freestyletournament.tournamentServ.Controller;
 
 import com.example.freestyletournament.tournamentServ.Model.ClassementTournois.ClassementDTO;
-import com.example.freestyletournament.tournamentServ.Model.ClassementTournois.ClassementTournois;
 import com.example.freestyletournament.tournamentServ.Model.ClassementTournois.ClassementTournoisDAO;
 import com.example.freestyletournament.tournamentServ.Model.MancheSwiss.MancheSwiss;
 import com.example.freestyletournament.tournamentServ.Model.MancheSwiss.MancheSwissDAO;
@@ -156,5 +155,9 @@ public class TournoisController {
     public void supprimerPlayerTournois(@PathVariable int idPlayer){
         playerTournoisDAO.supprimerParticipant(idPlayer);
     }
-
+    @PostMapping("/modifierParticipant")
+    public void modifierParticipant(@RequestBody PlayerSwissDTO player){
+        log.info("updateNamePlayer"+"le nom a update est :"+player.getNom());
+        playerSwissDAO.modifierPlayerTournois(player);
+    }
 }

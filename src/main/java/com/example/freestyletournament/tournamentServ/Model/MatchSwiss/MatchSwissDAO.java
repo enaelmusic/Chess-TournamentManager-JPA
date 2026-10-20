@@ -4,6 +4,7 @@ import com.example.freestyletournament.tournamentServ.Model.ClassementTournois.C
 import com.example.freestyletournament.tournamentServ.Model.ClassementTournois.ClassementTournoisRep;
 import com.example.freestyletournament.tournamentServ.Model.MancheSwiss.MancheSwiss;
 import com.example.freestyletournament.tournamentServ.Model.MancheSwiss.MancheSwissRep;
+import com.example.freestyletournament.tournamentServ.Model.ModelService.MatchStatus;
 import com.example.freestyletournament.tournamentServ.Model.ModelService.UniqueService;
 import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwiss;
 import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwissDTO;
@@ -74,7 +75,7 @@ public class MatchSwissDAO {
         MatchSwiss match = new MatchSwiss();
         PlayerSwissDTO pW = players.getFirst();
         match.buildMatch(num_manche, pW.getId(), pW.getNom(), pW.getId(), "BYE", num_match, numTable);
-        match.setStatus(4);
+        match.setStatus(MatchStatus.BYE.getTyni());
         match.setTableNum(0);
         matchSwissRepestory.save(match);
         return match;
