@@ -14,4 +14,6 @@ public interface PlayerTournoisModel extends CrudRepository<PlayerTournois, Inte
     Set<PlayerTournois> findAllByIdTournois(int idTournois);
     @NativeQuery("SELECT * FROM PLAYER_TOURNOIS where idPlayer=?1")
     PlayerTournois findPlayerById(int idPlayer);
+    @NativeQuery("SELECT * FROM PLAYER_TOURNOIS where idPlayer=?1 AND idTournois=?2")
+    PlayerTournois findPlayerByIdPlayerAndTournois(int idPlayer, int idTournois);
 }

@@ -160,4 +160,8 @@ public class TournoisController {
         log.info("updateNamePlayer"+"le nom a update est :"+player.getNom());
         playerSwissDAO.modifierPlayerTournois(player);
     }
+    @PostMapping("/joueurOut")
+    public void joueurOut(@RequestBody PlayerTournois player){
+        playerTournoisDAO.saveJoueurTournois(player);
+    }
 }

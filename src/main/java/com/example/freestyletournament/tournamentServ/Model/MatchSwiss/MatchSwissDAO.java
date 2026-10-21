@@ -5,6 +5,7 @@ import com.example.freestyletournament.tournamentServ.Model.ClassementTournois.C
 import com.example.freestyletournament.tournamentServ.Model.MancheSwiss.MancheSwiss;
 import com.example.freestyletournament.tournamentServ.Model.MancheSwiss.MancheSwissRep;
 import com.example.freestyletournament.tournamentServ.Model.ModelService.MatchStatus;
+import com.example.freestyletournament.tournamentServ.Model.ModelService.ParticipantEnum;
 import com.example.freestyletournament.tournamentServ.Model.ModelService.UniqueService;
 import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwiss;
 import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwissDTO;
@@ -95,7 +96,7 @@ public class MatchSwissDAO {
         ArrayList<PlayerSwiss> players = classementTournoisDAO.getPlayerclasser(idTournois) ;
         ArrayList<PlayerSwissDTO> playerSwissDTOS= new ArrayList<>();
         for(PlayerSwiss p : players){
-            playerSwissDTOS.add(new PlayerSwissDTO(p.getId(),p.getNom()));
+            playerSwissDTOS.add(new PlayerSwissDTO(p.getId(),p.getNom(), ParticipantEnum.PARTICIPE.getTyni()));
         }
         int numTable = 1;
         while (playerSwissDTOS.size() > 0) {

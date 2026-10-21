@@ -30,14 +30,21 @@ public class PlayerTournoisDAO {
         pt.setIdPlayer(idPlayer);
         playerTournoiModel.save(pt);
     }
+    public void saveJoueurTournois(PlayerTournois playerTournois){
+        PlayerTournois pt = playerTournoiModel.findPlayerByIdPlayerAndTournois(playerTournois.getIdPlayer(),playerTournois.getIdTournois());
+        pt.setStatus(ParticipantEnum.PARTICIPEPLUS.getTyni());
+        playerTournoiModel.save(pt);
+    }
 
     public TreeSet<PlayerSwissDTO> getPlayerByIdTournois(int idTournois){
         TreeSet< PlayerSwissDTO> playerSet = new TreeSet<PlayerSwissDTO>();
         Set<PlayerTournois> playerTournois = playerTournoiModel.findAllByIdTournois(idTournois);
         for(PlayerTournois pt : playerTournois){
-            if(pt.getStatus()==ParticipantEnum.PARTICIPE.getTyni()){
+            if(pt.getStatus()!=ParticipantEnum.PARTICIPEPAS.getTyni()){
+                log.info("playertournois status: "+pt.getStatus());
                 PlayerSwiss player = psModel.findById_joueurJ(pt.getIdPlayer());
-                PlayerSwissDTO pDTO = new PlayerSwissDTO(player.getId(),player.getNom());
+                PlayerSwissDTO pDTO = new PlayerSwissDTO(player.getId(),player.getNom(), pt.getStatus());
+                log.info("PlayerDTO status : "+pDTO.getStatusTournois());
                 playerSet.add(pDTO);
             }
         }
