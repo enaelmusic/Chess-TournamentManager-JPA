@@ -99,7 +99,7 @@ public class TournoisDAO {
         MancheSwiss m = new MancheSwiss();
         m = mancheSwissDAO.getNextManche(mancheSwissDAO.getMancheByNum(num_manchePrecedente));
         m.setStatus(MancheEnum.ENCOURS.getTyni());
-        return matchSwissDAO.appariementLogic(m.getNum_manche(), idTournois);
+        return matchSwissDAO.appariementPlayer(m.getNum_manche(), idTournois);
     }
 
     public TournoisDTO getTournoisDto(String num_manche){

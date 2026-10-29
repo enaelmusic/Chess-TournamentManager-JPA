@@ -4,10 +4,8 @@ import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSw
 import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwissDAO;
 import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwissDTO;
 import com.example.freestyletournament.tournamentServ.Model.PlayerTournois.PlayerTournoisDAO;
-import com.example.freestyletournament.tournamentServ.Model.PlayerTournois.PlayerTournoisModel;
 import com.example.freestyletournament.tournamentServ.Model.Tournois.Tournois;
 import com.example.freestyletournament.tournamentServ.Model.Tournois.TournoisDAO;
-import com.example.freestyletournament.tournamentServ.Model.Tournois.TournoisModel;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -74,5 +72,6 @@ class TournamentServApplicationTests {
 			System.out.print(p.toString());
 		}
 	}
+
 
 }

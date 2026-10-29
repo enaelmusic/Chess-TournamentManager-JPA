@@ -11,14 +11,13 @@ import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSw
 import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwissDTO;
 import com.example.freestyletournament.tournamentServ.Model.Tournois.TournoisDAO;
 import com.example.freestyletournament.tournamentServ.Model.Tournois.TournoisModel;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.TreeSet;
+import java.util.*;
 
 @Service
 public class MatchSwissDAO {
@@ -81,47 +80,134 @@ public class MatchSwissDAO {
         matchSwissRepestory.save(match);
         return match;
     }
+    public MatchSwiss buildPlayerBye(String num_manche, PlayerSwissDTO player, String num_match, int numTable) {
+        MatchSwiss match = new MatchSwiss();
+        match.buildMatch(num_manche, player.getId(), player.getNom(), player.getId(), "BYE", num_match, numTable);
+        match.setStatus(MatchStatus.BYE.getTyni());
+        return match;
+    }
 
     public MatchSwiss changerStatus(MatchSwiss rs) {
         return matchSwissRepestory.save(rs);
     }
-
-    public TreeSet<MatchSwiss> appariementLogic(String num_manche, int idTournois) {
-        //je cherche le meilleur joueur : RoundGagner max, roundPerdu MIN , roundNull min
-        //BUG FIN AOUT
-        /**
-         * il y avait un bug lors du build BYE, j'ai remplacer tout correctement suaf la lighe 104, ici c'est fait a tester .
-         */
-        TreeSet<MatchSwiss> resultSet = new TreeSet<>();
-        ArrayList<PlayerSwiss> players = classementTournoisDAO.getPlayerclasser(idTournois) ;
-        ArrayList<PlayerSwissDTO> playerSwissDTOS= new ArrayList<>();
-        for(PlayerSwiss p : players){
-            playerSwissDTOS.add(new PlayerSwissDTO(p.getId(),p.getNom(), ParticipantEnum.PARTICIPE.getTyni()));
-        }
-        int numTable = 1;
-        while (playerSwissDTOS.size() > 0) {
-            MatchSwiss match = new MatchSwiss();
-            String num_match = num_manche + "->" + numTable;
-            if (playerSwissDTOS.size() == 1) {
-                resultSet.add(buildPlayerBye(num_manche, playerSwissDTOS, num_match, numTable));
-                playerSwissDTOS.removeFirst();
-            } else {
-                PlayerSwissDTO pW = playerSwissDTOS.getFirst();
-                playerSwissDTOS.remove(pW);
-                PlayerSwissDTO pB = playerSwissDTOS.getFirst();
-                playerSwissDTOS.remove(pB);
-                match.buildMatch(num_manche, pW.getId(), pW.getNom(), pB.getId(), pB.getNom(), num_match, numTable);
-                numTable++;
-                match = matchSwissRepestory.save(match);
-                resultSet.add(match);
+    private Map<Integer,Set<Integer>> historiqueMapConvertor(TreeSet<MatchSwissDTO> historiqueRencontre ){
+        Map<Integer, Set<Integer>> adversaireHistorique = new HashMap<>();
+        for(MatchSwissDTO m : historiqueRencontre){
+            int w= m.getIdPlayerW();
+            int b = m.getIdPlayerB();
+            if(!adversaireHistorique.containsKey(w)){
+                adversaireHistorique.put(w,new HashSet<>());
             }
+            if(!adversaireHistorique.containsKey(b)){
+                adversaireHistorique.put(b, new HashSet<>());
+            }
+            adversaireHistorique.get(w).add(b);
+            adversaireHistorique.get(b).add(w);
         }
-        return resultSet;
+        return adversaireHistorique;
+    }
+    public TreeSet<MatchSwiss> appariementPlayer(String num_manche, int idTournois){
+        TreeSet<MatchSwiss> result = new TreeSet<>();
+        ArrayList<PlayerSwissDTO> particpants = classementTournoisDAO.getPlayerclasser(idTournois);
+        TreeSet<MatchSwissDTO> historiqueRencontre = matchSwissRepestory.chargerHistorique(idTournois);
+        Map<Integer, Set<Integer>> adversaireHistorique = historiqueMapConvertor(historiqueRencontre);
+        ArrayList<MatchSwiss> matchsTemporaires = new ArrayList<>();
+        int num_table=1;
+        if(particpants.size()%2!=0){
+            return gestionImpaire(num_manche,particpants, adversaireHistorique, matchsTemporaires, num_table, result);
+        }
+        else{
+            return gestionPaire(num_manche,particpants, adversaireHistorique, matchsTemporaires, num_table, result);
+        }
     }
 
+    private TreeSet<MatchSwiss> gestionPaire(String num_manche,  ArrayList<PlayerSwissDTO> particpants, Map<Integer, Set<Integer>> adversaireHistorique, ArrayList<MatchSwiss> matchsTemporaires, int num_table, TreeSet<MatchSwiss> result) {
+        boolean appariementSucces = chercherAdversaire(num_manche, particpants, adversaireHistorique, matchsTemporaires, num_table);
+        if(appariementSucces){
+            for(MatchSwiss m : matchsTemporaires){
+                result.add(matchSwissRepestory.save(m));
+            }
+            return result;
+        }
+        else{
+            throw new IllegalStateException("probleme d'appareiment");
+        }
+    }
+
+    private TreeSet<MatchSwiss> gestionImpaire(String num_manche, @NonNull ArrayList<PlayerSwissDTO> particpants, Map<Integer, Set<Integer>> adversaireHistorique, ArrayList<MatchSwiss> matchsTemporaires, int num_table, TreeSet<MatchSwiss> result) {
+        for(int i = particpants.size(); i>0; i--){
+            int idParticipant = particpants.get(i-1).getId();
+            boolean etaitBye = adversaireHistorique.containsKey(idParticipant) && adversaireHistorique.get(idParticipant).contains(idParticipant);
+            if(!etaitBye){
+                PlayerSwissDTO playerDernier = particpants.remove(i-1);
+                boolean appariementSucces = chercherAdversaire(num_manche, particpants, adversaireHistorique, matchsTemporaires, num_table);
+                if(appariementSucces){
+                    int derniereTable = matchsTemporaires.size()+1;
+                    String num_match = num_manche + "->" + derniereTable;
+                    MatchSwiss matchBy = buildPlayerBye(num_manche, playerDernier, num_match, derniereTable);
+                    matchsTemporaires.add(matchBy);
+                    for(MatchSwiss matchSwiss : matchsTemporaires){
+                        result.add(matchSwissRepestory.save(matchSwiss));
+                    }
+                    return result;
+                }
+                else{
+                    particpants.add(i-1,playerDernier);
+                }
+            }
+        }
+        throw new IllegalStateException("probleme d'appariement");
+    }
+
+    /**
+     * chercherAdversaire
+     * @param num_manche
+     * @param particpants
+     * @param adversaireHistorique
+     * @param matchsTemporaires
+     * @param numTable
+     * @return si tout les joueurs ont etes apparier, ou que par recurssion la liste c'est videe induit que tout les joueurs ont ete apparier
+     */
+    private boolean chercherAdversaire(String num_manche,
+                                       ArrayList<PlayerSwissDTO> particpants,
+                                       Map<Integer, Set<Integer>> adversaireHistorique,
+                                       ArrayList<MatchSwiss> matchsTemporaires,
+                                       int numTable) {
+        if(particpants.isEmpty()){
+            return true;
+        }
+        PlayerSwissDTO playerWhite = particpants.removeFirst();
+        for(int i=0; i<particpants.size();i++){
+            PlayerSwissDTO playerBlackPotentiel = particpants.get(i);
+            Set<Integer> adversaires = adversaireHistorique.get(playerWhite.getId());
+            boolean dejaAffronter= (adversaires!=null)&&(adversaires.contains(playerBlackPotentiel.getId()));
+            if(!dejaAffronter){
+                PlayerSwissDTO playerBlack = particpants.remove(i);
+                String num_match = num_manche + "->" + numTable;
+                MatchSwiss m = new MatchSwiss();
+                m.buildMatch(num_manche,playerWhite.getId(),playerWhite.getNom(),playerBlack.getId(),playerBlack.getNom(),num_match,numTable);
+                matchsTemporaires.add(m);
+                /**
+                 * si cette fonctionne donne vrai, toute les tables on été faite(participants.isEmpty()=true;)
+                 * on imbrique la methode complete dans la boucle jusqu'a ce que ca deviennent true.
+                 */
+                if(chercherAdversaire(num_manche,particpants,adversaireHistorique,matchsTemporaires,numTable+1)){
+                    return true;
+                }
+                //si le true ne viens pas, alors on annule le match enregistré et remet le player black dans la liste.
+                matchsTemporaires.removeLast();
+                particpants.add(i,playerBlack);
+            }
+        }
+        //si il ne peux pas appareier il repond faux. un joueur bye doit etre construit, ou que les joueur ce sont déja rencontrer.
+        particpants.addFirst(playerWhite);
+        return false;
+    }
     public TreeSet<MatchSwiss> getMatchByManche(String num_manche){
         TreeSet<MatchSwiss> m = matchSwissRepestory.findMatchBynumManche(num_manche);
         return m;
     }
+    public TreeSet<MatchSwissDTO> chargerHistorique(int i) {
+        return matchSwissRepestory.chargerHistorique(i);
+    }
 }
-

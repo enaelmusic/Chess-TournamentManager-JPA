@@ -1,6 +1,7 @@
 package com.example.freestyletournament.tournamentServ.Model.ClassementTournois;
 
 import com.example.freestyletournament.tournamentServ.Model.MatchSwiss.MatchSwiss;
+import com.example.freestyletournament.tournamentServ.Model.ModelService.ParticipantEnum;
 import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwiss;
 import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwissDTO;
 import org.slf4j.Logger;
@@ -67,8 +68,15 @@ public class ClassementTournoisDAO {
         return classement.findAdversaireQuery(idPlayer);
     }
 
-    public ArrayList<PlayerSwiss> getPlayerclasser(int idTournois){
-        return classement.getPlayersClassee(idTournois);
+    public ArrayList<PlayerSwissDTO> getPlayerclasser(int idTournois){
+        ArrayList<PlayerSwissDTO>  result= classement.getPlayersClassee(idTournois);
+        for(int i= result.size(); i>0;i--){
+            PlayerSwissDTO p = result.get(i-1);
+            if(p.getStatusTournois()== ParticipantEnum.PARTICIPEPAS.getTyni() || p.getStatusTournois()==ParticipantEnum.PARTICIPEPLUS.getTyni()){
+                result.remove(i-1);
+            }
+        }
+        return result;
     }
     public ArrayList<ClassementDTO> getClassmenetTournois(String idTournois){
         return classement.getClassementTournois(idTournois);
