@@ -113,6 +113,10 @@ public class MatchSwissDAO {
         Map<Integer, Set<Integer>> adversaireHistorique = historiqueMapConvertor(historiqueRencontre);
         ArrayList<MatchSwiss> matchsTemporaires = new ArrayList<>();
         int num_table=1;
+        for(Map.Entry<Integer, Set<Integer>> ligne : adversaireHistorique.entrySet()){
+            System.out.println("le joueur : "+ligne.getKey()+" a jouer contre : "+ligne.getValue());
+
+        }
         if(particpants.size()%2!=0){
             return gestionImpaire(num_manche,particpants, adversaireHistorique, matchsTemporaires, num_table, result);
         }

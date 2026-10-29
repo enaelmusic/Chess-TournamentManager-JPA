@@ -25,6 +25,6 @@ public interface ClassementTournoisRep extends JpaRepository<ClassementTournois,
     //utilisable
     @Query("SELECT new com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwissDTO (PT.id, PT.nom, T.status ) FROM PlayerSwiss PT JOIN ClassementTournois CT ON PT.id=CT.idPlayer JOIN PlayerTournois T ON T.idPlayer=CT.idPlayer  WHERE CT.idTournois=?1 ORDER BY CT.point DESC , CT.round_gagner , CT.round_perdu , CT.round_null DESC")
     ArrayList<PlayerSwissDTO> getPlayersClassee(int idTournois);
-    @Query("SELECT new com.example.freestyletournament.tournamentServ.Model.ClassementTournois.ClassementDTO(CT.idPlayer, P.nom, CT.point) FROM ClassementTournois CT JOIN PlayerSwiss P ON P.id=CT.idPlayer WHERE CT.idTournois=:idTournois ORDER BY CT.point DESC , CT.round_gagner , CT.round_perdu , CT.round_null DESC")
+    @Query("SELECT new com.example.freestyletournament.tournamentServ.Model.ClassementTournois.ClassementDTO(CT.idPlayer, P.nom, CT.point, PT.status) FROM ClassementTournois CT JOIN PlayerSwiss P ON P.id=CT.idPlayer JOIN PlayerTournois PT ON PT.idPlayer=CT.idPlayer WHERE CT.idTournois=?1 ORDER BY CT.point DESC , CT.round_gagner , CT.round_perdu , CT.round_null DESC")
     ArrayList<ClassementDTO> getClassementTournois(String idTournois);
 }

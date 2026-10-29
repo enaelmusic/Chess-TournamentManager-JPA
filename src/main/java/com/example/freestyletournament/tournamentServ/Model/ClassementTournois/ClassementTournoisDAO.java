@@ -79,6 +79,7 @@ public class ClassementTournoisDAO {
         return result;
     }
     public ArrayList<ClassementDTO> getClassmenetTournois(String idTournois){
-        return classement.getClassementTournois(idTournois);
+        ArrayList<ClassementDTO>  result = classement.getClassementTournois(idTournois);
+        return result;
     }
 }
