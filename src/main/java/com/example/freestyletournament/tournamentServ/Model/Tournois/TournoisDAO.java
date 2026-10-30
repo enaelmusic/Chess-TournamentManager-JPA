@@ -5,6 +5,7 @@ import com.example.freestyletournament.tournamentServ.Model.MancheSwiss.MancheSw
 import com.example.freestyletournament.tournamentServ.Model.MancheSwiss.MancheSwissDAO;
 import com.example.freestyletournament.tournamentServ.Model.MatchSwiss.MatchSwiss;
 import com.example.freestyletournament.tournamentServ.Model.MatchSwiss.MatchSwissDAO;
+import com.example.freestyletournament.tournamentServ.Model.MatchSwiss.MatchSwissDTO;
 import com.example.freestyletournament.tournamentServ.Model.ModelService.MancheEnum;
 import com.example.freestyletournament.tournamentServ.Model.ModelService.TournoisEnum;
 import com.example.freestyletournament.tournamentServ.Model.ModelService.UniqueService;
@@ -85,21 +86,24 @@ public class TournoisDAO {
     }
 
     public TreeSet<MatchSwiss> nextManche(TreeSet<MatchSwiss> matches) throws DernierMancheException {
-        //enregistrer status de manche precedenent
-        //preparer une nouvelle round avec les meme joueur et le idtournois
-        //renvoyer une liste de match
+
         String num_manchePrecedente = matches.getFirst().getNum_manche();
         int idTournois = mancheSwissDAO.getIdTournois(num_manchePrecedente);
+        MancheSwiss manchePrecedente = mancheSwissDAO.getMancheByNum(num_manchePrecedente);
         log.info("TournDaO::nextManche::" + "manche precedente : " + num_manchePrecedente);
-        mancheSwissDAO.sauverStatusManche(mancheSwissDAO.getMancheByNum(num_manchePrecedente), MancheEnum.FINI.getTyni());
+
         for (MatchSwiss match : matches) {
-            matchSwissDAO.changerStatus(match);
-            classementTournoisDAO.sauverPoint(idTournois, match);
+            if(manchePrecedente.getStatus()!=MancheEnum.FINI.getTyni()){
+                classementTournoisDAO.sauverPoint(idTournois, match);
+                matchSwissDAO.changerStatus(match);
+            }
         }
-        MancheSwiss m = new MancheSwiss();
-        m = mancheSwissDAO.getNextManche(mancheSwissDAO.getMancheByNum(num_manchePrecedente));
-        m.setStatus(MancheEnum.ENCOURS.getTyni());
-        return matchSwissDAO.appariementPlayer(m.getNum_manche(), idTournois);
+        mancheSwissDAO.sauverStatusManche(mancheSwissDAO.getMancheByNum(num_manchePrecedente), MancheEnum.FINI.getTyni());
+
+        MancheSwiss mSuivante = mancheSwissDAO.getNextManche(mancheSwissDAO.getMancheByNum(num_manchePrecedente));
+        TreeSet<MatchSwiss> appariement= matchSwissDAO.appariementPlayer(mSuivante.getNum_manche(), idTournois,mSuivante.getInt_manche());
+        mancheSwissDAO.sauverStatusManche(mancheSwissDAO.getMancheByNum(mSuivante.getNum_manche()), MancheEnum.ENCOURS.getTyni());
+        return appariement;
     }
 
     public TournoisDTO getTournoisDto(String num_manche){
