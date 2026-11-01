@@ -162,6 +162,6 @@ public class TournoisController {
     }
     @PostMapping("/joueurOut")
     public void joueurOut(@RequestBody PlayerTournois player){
-        playerTournoisDAO.saveJoueurTournois(player);
+        playerTournoisDAO.saveJoueurOutTournois(player);
     }
 }

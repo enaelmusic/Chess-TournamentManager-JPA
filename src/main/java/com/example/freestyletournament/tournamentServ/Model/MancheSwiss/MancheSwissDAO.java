@@ -1,6 +1,9 @@
 package com.example.freestyletournament.tournamentServ.Model.MancheSwiss;
 
 import com.example.freestyletournament.tournamentServ.Model.MatchSwiss.MatchSwiss;
+import com.example.freestyletournament.tournamentServ.Model.MatchSwiss.MatchSwissDAO;
+import com.example.freestyletournament.tournamentServ.Model.ModelService.MancheEnum;
+import com.example.freestyletournament.tournamentServ.Model.ModelService.MatchStatus;
 import com.example.freestyletournament.tournamentServ.Model.Tournois.DernierMancheException;
 import com.example.freestyletournament.tournamentServ.Model.Tournois.Tournois;
 import com.example.freestyletournament.tournamentServ.Model.Tournois.TournoisDAO;
@@ -18,9 +21,11 @@ import java.util.TreeSet;
 public class MancheSwissDAO {
     private static final Logger log= LoggerFactory.getLogger(MancheSwissDAO.class);
     @Autowired
-    MancheSwissRep mancheRep;
+    private MancheSwissRep mancheRep;
     @Autowired
-    TournoisModel tournoisModel;
+    private TournoisModel tournoisModel;
+    @Autowired
+    private MatchSwissDAO matchSwissDAO;
 
     public TreeSet<MancheSwiss>  creerManche(String num_tournois, int nbrManche, int idTournois){
         log.info("je rentre en fonction creerManche numtournois= "+num_tournois+"nbrmanche = "+nbrManche);
@@ -63,16 +68,30 @@ public class MancheSwissDAO {
         manche.setStatus(x);
         return mancheRep.save(manche);
     }
+    private MancheSwiss jourOUTsauverStatusManche(String num_manche){
+        MancheSwiss manche = mancheRep.findMancheByManche(num_manche);
+        manche.setStatus(MancheEnum.ANNULE.getTyni());
+        manche = mancheRep.save(manche);
+        matchSwissDAO.annulerMatch(num_manche,manche.getStatus());
+        return manche;
+    }
+
+    public void joueurOutService(int idTournois) {
+        String numManche = matchSwissDAO.dernierMancheEnCours(idTournois);
+        MancheSwiss manche = jourOUTsauverStatusManche(numManche);
+        matchSwissDAO.appariementPlayer(numManche, idTournois,manche.getInt_manche());
+        sauverStatusManche(manche,MancheEnum.ENCOURS.getTyni());
+    }
 
     public int getIdTournois(String numManche){
         log.info("MSDAO :"+numManche);
-        MancheSwiss mancheSwiss=mancheRep.findIdMancheByManche(numManche);
+        MancheSwiss mancheSwiss=mancheRep.findMancheByManche(numManche);
         Tournois tournois = tournoisModel.findIdTournoisByNumTournois(mancheSwiss.getNum_tournois());
         return tournois.getId();
     }
 
     public MancheSwiss getMancheByNum(String num_manche){
-        return mancheRep.findIdMancheByManche(num_manche);
+        return mancheRep.findMancheByManche(num_manche);
     }
 
     public ArrayList<MancheSwiss> getManchesByTournoisNum(String num_tournois){

@@ -3,6 +3,7 @@ package com.example.freestyletournament.tournamentServ.Model.Tournois;
 import com.example.freestyletournament.tournamentServ.Model.ClassementTournois.ClassementTournoisDAO;
 import com.example.freestyletournament.tournamentServ.Model.MancheSwiss.MancheSwiss;
 import com.example.freestyletournament.tournamentServ.Model.MancheSwiss.MancheSwissDAO;
+import com.example.freestyletournament.tournamentServ.Model.MatchSwiss.AppariementException;
 import com.example.freestyletournament.tournamentServ.Model.MatchSwiss.MatchSwiss;
 import com.example.freestyletournament.tournamentServ.Model.MatchSwiss.MatchSwissDAO;
 import com.example.freestyletournament.tournamentServ.Model.MatchSwiss.MatchSwissDTO;
@@ -91,19 +92,24 @@ public class TournoisDAO {
         int idTournois = mancheSwissDAO.getIdTournois(num_manchePrecedente);
         MancheSwiss manchePrecedente = mancheSwissDAO.getMancheByNum(num_manchePrecedente);
         log.info("TournDaO::nextManche::" + "manche precedente : " + num_manchePrecedente);
-
-        for (MatchSwiss match : matches) {
-            if(manchePrecedente.getStatus()!=MancheEnum.FINI.getTyni()){
-                classementTournoisDAO.sauverPoint(idTournois, match);
-                matchSwissDAO.changerStatus(match);
+        if(manchePrecedente.getStatus()!=MancheEnum.FINI.getTyni()){
+            for (MatchSwiss match : matches) {
+                if(manchePrecedente.getStatus()!=MancheEnum.FINI.getTyni()){
+                    classementTournoisDAO.sauverPoint(idTournois, match);
+                    matchSwissDAO.changerStatus(match);
+                }
             }
         }
         mancheSwissDAO.sauverStatusManche(mancheSwissDAO.getMancheByNum(num_manchePrecedente), MancheEnum.FINI.getTyni());
 
         MancheSwiss mSuivante = mancheSwissDAO.getNextManche(mancheSwissDAO.getMancheByNum(num_manchePrecedente));
-        TreeSet<MatchSwiss> appariement= matchSwissDAO.appariementPlayer(mSuivante.getNum_manche(), idTournois,mSuivante.getInt_manche());
-        mancheSwissDAO.sauverStatusManche(mancheSwissDAO.getMancheByNum(mSuivante.getNum_manche()), MancheEnum.ENCOURS.getTyni());
-        return appariement;
+        try{
+            TreeSet<MatchSwiss> appariement= matchSwissDAO.appariementPlayer(mSuivante.getNum_manche(), idTournois,mSuivante.getInt_manche());
+            mancheSwissDAO.sauverStatusManche(mancheSwissDAO.getMancheByNum(mSuivante.getNum_manche()), MancheEnum.ENCOURS.getTyni());
+            return appariement;
+        } catch (AppariementException e) {
+            throw new AppariementException("probleme d'appariement");
+        }
     }
 
     public TournoisDTO getTournoisDto(String num_manche){

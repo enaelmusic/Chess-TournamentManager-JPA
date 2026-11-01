@@ -23,5 +23,6 @@ public interface MatchSwissRepestory extends JpaRepository<MatchSwiss, Integer> 
     @NativeQuery("SELECT * FROM MATCHSWISS WHERE num_manche=?1")
     TreeSet<MatchSwiss> findMatchBynumManche(String num_manche);
 
-
+    @NativeQuery("SELECT MS.num_manche FROM MATCHSWISS MS JOIN TEST_MANCHESWISS TMS ON MS.num_manche=TMS.num_manche JOIN Tournois T ON T.num_tournois=TMS.num_tournois WHERE T.id=?1 AND TMS.status=1 ORDER BY TMS.num_manche ASC LIMIT 1")
+    String getLastMancheEnCours(int idTournois);
 }

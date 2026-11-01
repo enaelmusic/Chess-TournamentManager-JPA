@@ -1,5 +1,10 @@
 package com.example.freestyletournament.tournamentServ.Model.PlayerTournois;
 
+import com.example.freestyletournament.tournamentServ.Model.MancheSwiss.MancheSwiss;
+import com.example.freestyletournament.tournamentServ.Model.MancheSwiss.MancheSwissDAO;
+import com.example.freestyletournament.tournamentServ.Model.MatchSwiss.MatchSwissDAO;
+import com.example.freestyletournament.tournamentServ.Model.MatchSwiss.MatchSwissRepestory;
+import com.example.freestyletournament.tournamentServ.Model.ModelService.MancheEnum;
 import com.example.freestyletournament.tournamentServ.Model.ModelService.ParticipantEnum;
 import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwiss;
 import com.example.freestyletournament.tournamentServ.Model.PlayerSwiss.PlayerSwissDTO;
@@ -23,6 +28,12 @@ public class PlayerTournoisDAO {
     private static final Logger log = LoggerFactory.getLogger(PlayerTournoisDAO.class);
     @Autowired
     private PlayerSwissModel psModel;
+    @Autowired
+    private MatchSwissDAO matchSwissDAO;
+    @Autowired
+    private MatchSwissRepestory matchSwissRepestory;
+    @Autowired
+    private MancheSwissDAO mancheSwissDAO;
 
     public void savePlayerTournois(int idTournois, int idPlayer){
         PlayerTournois pt = new PlayerTournois();
@@ -30,10 +41,12 @@ public class PlayerTournoisDAO {
         pt.setIdPlayer(idPlayer);
         playerTournoiModel.save(pt);
     }
-    public void saveJoueurTournois(PlayerTournois playerTournois){
+    public void saveJoueurOutTournois(PlayerTournois playerTournois){
         PlayerTournois pt = playerTournoiModel.findPlayerByIdPlayerAndTournois(playerTournois.getIdPlayer(),playerTournois.getIdTournois());
         pt.setStatus(ParticipantEnum.PARTICIPEPLUS.getTyni());
         playerTournoiModel.save(pt);
+        int idTournois = pt.getIdTournois();
+        mancheSwissDAO.joueurOutService(idTournois);
     }
 
     public TreeSet<PlayerSwissDTO> getPlayerByIdTournois(int idTournois){

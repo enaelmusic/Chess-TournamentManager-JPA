@@ -5,7 +5,8 @@ public enum MatchStatus {
     WHITE(1),
     BLACK(2),
     DRAW(3),
-    BYE(4);
+    BYE(4),
+    ANNULE(5);
 
     private int tyni;
     private MatchStatus(int i){
